@@ -130,7 +130,6 @@ void MyNdkCamera::on_image_render(cv::Mat& rgb) const
             std::vector<Object> objects;
             g_nanodet->detect(rgb, objects);
 
-            g_nanodet->draw(rgb, objects);
         }
         else
         {
@@ -184,45 +183,25 @@ JNIEXPORT jboolean JNICALL Java_com_tencent_nanodetncnn_NanoDetNcnn_loadModel(JN
     const char* modeltypes[] =
     {
         "m",
-        "m-416",
-        "g",
-        "ELite0_320",
-        "ELite1_416",
-        "ELite2_512",
-        "RepVGG-A0_416"
+        "midas"
     };
 
     const int target_sizes[] =
     {
         320,
-        416,
-        416,
-        320,
-        416,
-        512,
-        416
+        256
     };
 
     const float mean_vals[][3] =
     {
         {103.53f, 116.28f, 123.675f},
-        {103.53f, 116.28f, 123.675f},
-        {103.53f, 116.28f, 123.675f},
-        {127.f, 127.f, 127.f},
-        {127.f, 127.f, 127.f},
-        {127.f, 127.f, 127.f},
-        {103.53f, 116.28f, 123.675f}
+        {123.675f, 116.28f, 103.53f}
     };
 
     const float norm_vals[][3] =
     {
         {1.f / 57.375f, 1.f / 57.12f, 1.f / 58.395f},
-        {1.f / 57.375f, 1.f / 57.12f, 1.f / 58.395f},
-        {1.f / 57.375f, 1.f / 57.12f, 1.f / 58.395f},
-        {1.f / 128.f, 1.f / 128.f, 1.f / 128.f},
-        {1.f / 128.f, 1.f / 128.f, 1.f / 128.f},
-        {1.f / 128.f, 1.f / 128.f, 1.f / 128.f},
-        {1.f / 57.375f, 1.f / 57.12f, 1.f / 58.395f}
+        {1.f / 58.395f, 1.f / 57.12f, 1.f / 57.375f}
     };
 
     const char* modeltype = modeltypes[(int)modelid];
