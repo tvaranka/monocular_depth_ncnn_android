@@ -2,8 +2,8 @@
 <resources>
     <string name="app_name">nanodetncnn</string>
     <string-array name="model_array">
-        <item>m</item>
         <item>midas</item>
+        <item>m</item>
     </string-array>
     <string-array name="cpugpu_array">
         <item>CPU</item>

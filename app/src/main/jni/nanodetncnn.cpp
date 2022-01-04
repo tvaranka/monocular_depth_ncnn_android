@@ -182,26 +182,27 @@ JNIEXPORT jboolean JNICALL Java_com_tencent_nanodetncnn_NanoDetNcnn_loadModel(JN
 
     const char* modeltypes[] =
     {
+        "midas",
         "m",
-        "midas"
+
     };
 
     const int target_sizes[] =
     {
+        256,
         320,
-        256
     };
 
     const float mean_vals[][3] =
     {
+        {123.675f, 116.28f, 103.53f},
         {103.53f, 116.28f, 123.675f},
-        {123.675f, 116.28f, 103.53f}
     };
 
     const float norm_vals[][3] =
     {
+        {1.f / 58.395f, 1.f / 57.12f, 1.f / 57.375f},
         {1.f / 57.375f, 1.f / 57.12f, 1.f / 58.395f},
-        {1.f / 58.395f, 1.f / 57.12f, 1.f / 57.375f}
     };
 
     const char* modeltype = modeltypes[(int)modelid];

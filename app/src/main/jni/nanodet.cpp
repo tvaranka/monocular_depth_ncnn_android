@@ -18,6 +18,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 
 #include "cpu.h"
+#include <string>
 
 #include <android/log.h>
 
@@ -52,8 +53,14 @@ int NanoDet::load(const char* modeltype, int _target_size, const float* _mean_va
 
     char parampath[256];
     char modelpath[256];
-    sprintf(parampath, "nanodet-%s.param", modeltype);
-    sprintf(modelpath, "nanodet-%s.bin", modeltype);
+    std::string s_modeltype = modeltype;
+    if (s_modeltype.compare("m")) {
+        sprintf(parampath, "nanodet-%s.param", modeltype);
+        sprintf(modelpath, "nanodet-%s.bin", modeltype);
+    } else if(s_modeltype.compare("midas")) {
+        sprintf(parampath, "midas_v21_small-int8.param");
+        sprintf(modelpath, "midas_v21_small-int8.bin");
+    }
 
     nanodet.load_param(parampath);
     nanodet.load_model(modelpath);
@@ -90,8 +97,14 @@ int NanoDet::load(AAssetManager* mgr, const char* modeltype, int _target_size, c
 
     char parampath[256];
     char modelpath[256];
-    sprintf(parampath, "nanodet-%s.param", modeltype);
-    sprintf(modelpath, "nanodet-%s.bin", modeltype);
+    std::string s_modeltype = modeltype;
+    if (s_modeltype.compare("m") == 0) {
+        sprintf(parampath, "nanodet-%s.param", modeltype);
+        sprintf(modelpath, "nanodet-%s.bin", modeltype);
+    } else {
+        sprintf(parampath, "midas_v21_small-int8.param");
+        sprintf(modelpath, "midas_v21_small-int8.bin");
+    }
 
     nanodet.load_param(mgr, parampath);
     nanodet.load_model(mgr, modelpath);
@@ -112,25 +125,29 @@ int NanoDet::detect(const cv::Mat& rgb, std::vector<Object>& objects, float prob
     int width = rgb.cols;
     int height = rgb.rows;
 
-    // pad to multiple of 32
-    int w = width;
-    int h = height;
-    float scale = 1.f;
-    scale = (float)target_size / w;
-    w = target_size;
-    h = h * scale;
+    int w = target_size;
+    int h = target_size;
 
-    scale = (float)target_size / h;
-    h = target_size;
-    w = w * scale;
-
-    ncnn::Mat in = ncnn::Mat::from_pixels_resize(rgb.data, ncnn::Mat::PIXEL_RGB2BGR, width, height, w, h);
+    ncnn::Mat in = ncnn::Mat::from_pixels_resize(rgb.data, ncnn::Mat::PIXEL_RGB, width, height, w, h);
 
     in.substract_mean_normalize(mean_vals, norm_vals);
 
     ncnn::Extractor ex = nanodet.create_extractor();
 
     ex.input("input.1", in);
+    ncnn::Mat out;
+    ex.extract("649", out);
+
+    ncnn::resize_bilinear(out, out, width, height);
+    cv::Mat cv_out(out.h, out.w, CV_8UC1);
+    out.to_pixels(cv_out.data, ncnn::Mat::PIXEL_GRAY);
+    //ncnn::Mat::to_pixels_resize(cv_out.data, width, height)
+    //out.to_pixels_resize(cv_out.data, ncnn::Mat::PIXEL_GRAY, width, height);
+    //LOGI("out width: %d, out height: %d\n", out.w, out.h);
+    //cv::Mat cv_out(height, width, CV_8UC1, out.data);
+    cv::Mat cv_out_rgb(cv_out.rows, cv_out.cols, CV_8UC3);
+    cv::cvtColor(cv_out, cv_out_rgb, cv::COLOR_GRAY2RGB);
+    cv_out_rgb.copyTo(rgb);
 
     return 0;
 }
