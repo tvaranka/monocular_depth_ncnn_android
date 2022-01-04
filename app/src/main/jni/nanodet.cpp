@@ -141,10 +141,6 @@ int NanoDet::detect(const cv::Mat& rgb, std::vector<Object>& objects, float prob
     ncnn::resize_bilinear(out, out, width, height);
     cv::Mat cv_out(out.h, out.w, CV_8UC1);
     out.to_pixels(cv_out.data, ncnn::Mat::PIXEL_GRAY);
-    //ncnn::Mat::to_pixels_resize(cv_out.data, width, height)
-    //out.to_pixels_resize(cv_out.data, ncnn::Mat::PIXEL_GRAY, width, height);
-    //LOGI("out width: %d, out height: %d\n", out.w, out.h);
-    //cv::Mat cv_out(height, width, CV_8UC1, out.data);
     cv::Mat cv_out_rgb(cv_out.rows, cv_out.cols, CV_8UC3);
     cv::cvtColor(cv_out, cv_out_rgb, cv::COLOR_GRAY2RGB);
     cv_out_rgb.copyTo(rgb);
