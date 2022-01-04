@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">nanodetncnn</string>
+    <string name="app_name">Monocular depth estimation</string>
     <string-array name="model_array">
         <item>midas</item>
         <item>m</item>
