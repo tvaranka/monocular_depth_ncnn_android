@@ -22,6 +22,9 @@
 
 #include "mat.h"
 
+#define  LOG_TAG "media-lib"
+#define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
+
 static void onDisconnected(void* context, ACameraDevice* device)
 {
     __android_log_print(ANDROID_LOG_WARN, "NdkCamera", "onDisconnected %p", device);
@@ -54,6 +57,7 @@ static void onImageAvailable(void* context, AImageReader* reader)
     int32_t height = 0;
     AImage_getWidth(image, &width);
     AImage_getHeight(image, &height);
+    //LOGI("width: %d, height: %d\n", width, height);
 
     int32_t y_pixelStride = 0;
     int32_t u_pixelStride = 0;
@@ -416,6 +420,7 @@ void NdkCamera::on_image(const unsigned char* nv21, int nv21_width, int nv21_hei
     cv::Mat rgb(h, w, CV_8UC3);
     ncnn::yuv420sp2rgb(nv21_rotated.data, w, h, rgb.data);
 
+
     on_image(rgb);
 }
 
@@ -474,6 +479,7 @@ void NdkCameraWindow::on_image_render(cv::Mat& rgb) const
 void NdkCameraWindow::on_image(const unsigned char* nv21, int nv21_width, int nv21_height) const
 {
     // resolve orientation from camera_orientation and accelerometer_sensor
+
     {
         if (!sensor_event_queue)
         {
@@ -718,6 +724,7 @@ void NdkCameraWindow::on_image(const unsigned char* nv21, int nv21_width, int nv
     // nv21_croprotated to rgb
     cv::Mat rgb(roi_h, roi_w, CV_8UC3);
     ncnn::yuv420sp2rgb(nv21_croprotated.data, roi_w, roi_h, rgb.data);
+
 
     on_image_render(rgb);
 

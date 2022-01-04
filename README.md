@@ -1,39 +1,30 @@
-# ncnn-android-nanodet
+# Monocular depth estimation on Android
 
-The NanoDet object detection
+A simple monocular depth estimation project using [MiDaS](https://github.com/isl-org/MiDaS) with the backend from [ncnn](https://github.com/Tencent/ncnn). The work from https://github.com/nihui/ncnn-android-nanodet served as a backbone for real-time processing with ncnn.
 
-This is a sample ncnn android project, it depends on ncnn library and opencv
+MiDaS uses .... to .... 
+
+Ncnn is used as the backend for deployment on android. The original model (66.3MB) was optimized using the [guide](https://ncnn.docsforge.com/master/how-to-use-and-faq/quantized-int8-inference/). First, the layers were fused. Secondly post-quantization was employed with a calibration dataset to quantize the model to int8. The optimized model has a size of 16.9MB.
+
+Ncnn offers support for both CPU and GPU. The GPU utilizes a Vulkan backend. However, for lower to mid range phones the benefits of GPU can be minimal or worse compared to the CPU.
+
+<p float="left">
+  <img src="demo.gif", width=400>
+</p>
+Figure 1. A simple example from my room. The model seems to work better from longer distances and the depth map is significantly worse after quantization. The fps is still very limited due to the relatively large model size despite quantization.</br>
+</br>
+
+#### References
 
 https://github.com/Tencent/ncnn
 
-https://github.com/nihui/opencv-mobile
+Towards Robust Monocular Depth Estimation: Mixing Datasets for Zero-shot Cross-dataset Transfer
+René Ranftl, Katrin Lasinger, David Hafner, Konrad Schindler, Vladlen Koltun
 
-## android apk file download
-https://github.com/nihui/ncnn-android-nanodet/releases/download/v2/com.tencent.nanodetncnn-release.apk
+https://github.com/isl-org/MiDaS
 
-## how to build and run
-### step1
-https://github.com/Tencent/ncnn/releases
 
-* Download ncnn-YYYYMMDD-android-vulkan.zip or build ncnn for android yourself
-* Extract ncnn-YYYYMMDD-android-vulkan.zip into **app/src/main/jni** and change the **ncnn_DIR** path to yours in **app/src/main/jni/CMakeLists.txt**
+https://github.com/nihui/ncnn-android-nanodet
 
-### step2
-https://github.com/nihui/opencv-mobile
 
-* Download opencv-mobile-XYZ-android.zip
-* Extract opencv-mobile-XYZ-android.zip into **app/src/main/jni** and change the **OpenCV_DIR** path to yours in **app/src/main/jni/CMakeLists.txt**
-
-### step3
-* Open this project with Android Studio, build it and enjoy!
-
-## some notes
-* Android ndk camera is used for best efficiency
-* Crash may happen on very old devices for lacking HAL3 camera interface
-* All models are manually modified to accept dynamic input shape
-* Most small models run slower on GPU than on CPU, this is common
-* FPS may be lower in dark environment because of longer camera exposure time
-
-## screenshot
-![](screenshot.jpg)
 
